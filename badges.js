@@ -101,7 +101,8 @@ const BadgeOverlayType = {
 };
 
 function page() {
-	for(let b=0; b<50; b++) {
+  for(let b=0; b<50; b++) {
+    let badge = badges[count];
     if (badge.game !== lastGame) {
       const gameHeader = document.createElement('h2');
       gameHeader.classList.add('itemCategoryHeader');
@@ -148,6 +149,7 @@ function page() {
     badgeModalContent.appendChild(item);
     count++;
   }
+}
   
 function initBadgeControls() {
   const badgeModalContent = document.querySelector('#badgesModal .modalContent');
@@ -201,7 +203,7 @@ function initBadgeControls() {
       removeLoader(document.getElementById('badgesModal'));
     });
   };
-  
+
   const updateBadgesAndPopulateModal = (slotRow, slotCol) => {
     sortOrder.onchange = () => onChangeBadgeSortOrder(slotRow, slotCol);
     document.getElementById('badgeGalleryButton').classList.toggle('hidden', !!(slotRow && slotCol));
