@@ -158,27 +158,27 @@ document.querySelector("#prev-button").setAttribute('disabled');
 
 //Navigation functionality for badges
 document.querySelector("#next-button").addEventListener("click", () => {
-	badgeModalContent.innerHTML = '';
+  badgeModalContent.innerHTML = '';
   addLoader(document.getElementById('badgesModal'), true);
   updateBadgesAndPopulateModal(slotRow, slotCol);
-	page();
+  page();
   badgeModalContent.appendChild(badgePageNav);
-	if (count > tabl.length)
-		document.querySelector("#next-button").setAttribute('disabled');
+  if (count > tabl.length)
+    document.querySelector("#next-button").setAttribute('disabled');
   if (count > 50)
-		document.querySelector("#prev-button").removeAttribute('disabled');
+    document.querySelector("#prev-button").removeAttribute('disabled');
 })
 document.querySelector("#prev-button").addEventListener("click", () => {
-	badgeModalContent.innerHTML = '';
+  badgeModalContent.innerHTML = '';
   addLoader(document.getElementById('badgesModal'), true);
   updateBadgesAndPopulateModal(slotRow, slotCol);
-	count-= 100;
-	page();
+  count-= 100;
+  page();
   badgeModalContent.appendChild(badgePageNav);
-	if (count < tabl.length)
-		document.querySelector("#next-button").removeAttribute('disabled');
+  if (count < tabl.length)
+    document.querySelector("#next-button").removeAttribute('disabled');
   if (count <= 50)
-		document.querySelector("#prev-button").setAttribute('disabled');
+    document.querySelector("#prev-button").setAttribute('disabled');
 })
 
 function initBadgeControls() {
