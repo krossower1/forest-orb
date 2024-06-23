@@ -146,7 +146,8 @@ function pagination() {
           closeModal();
         });
     }
-    badgeModalContent.appendChild(item);
+    if(typeof item !== "undefined") 
+      badgeModalContent.appendChild(item);
     count++;
   }
   let badgePageNav = badgeModalContent.createElement("nav");
