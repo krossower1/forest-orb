@@ -100,7 +100,7 @@ const BadgeOverlayType = {
   LOCATION: 16
 };
 
-function page() {
+function pagination() {
   for(let b=0; b<50; b++) {
     let badge = badges[count];
     if (badge.game !== lastGame) {
@@ -149,8 +149,37 @@ function page() {
     badgeModalContent.appendChild(item);
     count++;
   }
+  let badgePageNav = badgeModalContent.createElement("nav");
+  badgePageNav.innerHTML = '<button class="pagination-button" id="prev-button" type="button" class="unselectable"> &lt; </button> <button class="pagination-button" id="next-button" type="button" class="unselectable"> &gt; </button>';
+  badgeModalContent.appendChild(badgePageNav);
 }
-  
+document.querySelector("#prev-button").setAttribute('disabled');
+
+//Navigation functionality for badges
+document.querySelector("#next-button").addEventListener("click", () => {
+	badgeModalContent.innerHTML = '';
+  addLoader(document.getElementById('badgesModal'), true);
+  updateBadgesAndPopulateModal(slotRow, slotCol);
+	page();
+  badgeModalContent.appendChild(badgePageNav);
+	if (count > tabl.length)
+		document.querySelector("#next-button").setAttribute('disabled');
+  if (count > 50)
+		document.querySelector("#prev-button").removeAttribute('disabled');
+})
+document.querySelector("#prev-button").addEventListener("click", () => {
+	badgeModalContent.innerHTML = '';
+  addLoader(document.getElementById('badgesModal'), true);
+  updateBadgesAndPopulateModal(slotRow, slotCol);
+	count-= 100;
+	page();
+  badgeModalContent.appendChild(badgePageNav);
+	if (count < tabl.length)
+		document.querySelector("#next-button").removeAttribute('disabled');
+  if (count <= 50)
+		document.querySelector("#prev-button").setAttribute('disabled');
+})
+
 function initBadgeControls() {
   const badgeModalContent = document.querySelector('#badgesModal .modalContent');
 
@@ -198,7 +227,7 @@ function initBadgeControls() {
       };
       badgeFilterCache.splice(0, badgeFilterCache.length);
       const badges = [{ badgeId: 'null', game: null}].concat(playerBadges.sort(badgeCompareFunc));
-      page();
+      pagination();
       updateBadgeVisibility();
       removeLoader(document.getElementById('badgesModal'));
     });
