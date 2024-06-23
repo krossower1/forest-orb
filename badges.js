@@ -14,6 +14,8 @@ let localizedBadgesIgnoreUpdateTimer = null;
 
 let badgeGameIds = [];
 
+let count = 0;
+
 const badgeGalleryRowBpLevels = [
   {
     bp: 300,
@@ -98,6 +100,55 @@ const BadgeOverlayType = {
   LOCATION: 16
 };
 
+function page() {
+	for(let b=0; b<50; b++) {
+    if (badge.game !== lastGame) {
+      const gameHeader = document.createElement('h2');
+      gameHeader.classList.add('itemCategoryHeader');
+      gameHeader.dataset.game = badge.game;
+      gameHeader.innerHTML = getMassagedLabel(localizedMessages.games[badge.game]);
+      badgeModalContent.appendChild(gameHeader);
+      lastGame = badge.game;
+      lastGroup = null;
+      if (badge.game !== 'ynoproject') {
+        const defaultSystemName = getDefaultUiTheme(badge.game);
+        initUiThemeContainerStyles(defaultSystemName, badge.game, false, () => initUiThemeFontStyles(defaultSystemName, badge.game, 0));
+        applyThemeStyles(gameHeader, (lastParsedSystemName = defaultSystemName.replace(/ /g, '_')), badge.game)
+      } else
+        lastParsedSystemName = null;
+    }
+    if (badge.group != lastGroup && localizedBadgeGroups.hasOwnProperty(lastGame) && localizedBadgeGroups[lastGame].hasOwnProperty(badge.group)) {
+      const groupHeader = document.createElement('h3');
+      groupHeader.classList.add('itemCategoryHeader');
+      groupHeader.dataset.game = badge.game;
+      groupHeader.dataset.group = badge.group;
+      groupHeader.innerHTML = getMassagedLabel(localizedBadgeGroups[lastGame][badge.group]);
+      badgeModalContent.appendChild(groupHeader);
+      lastGroup = badge.group;
+      if (lastParsedSystemName)
+        applyThemeStyles(groupHeader, lastParsedSystemName, lastGame);
+    }
+    const item = getBadgeItem(badge, true, true, true, true, true, lastParsedSystemName);
+    if (badge.badgeId === (playerData?.badge || 'null'))
+      item.children[0].classList.add('selected');
+    if (!item.classList.contains('disabled')) {
+      item.onclick = slotRow && slotCol
+        ? () => updatePlayerBadgeSlot(badge.badgeId, slotRow, slotCol, () => {
+          updateBadgeSlots(() => {
+            initAccountSettingsModal();
+            initBadgeGalleryModal();
+            closeModal()
+          });
+        })
+        : () => updatePlayerBadge(badge.badgeId, () => {
+          initAccountSettingsModal();
+          closeModal();
+        });
+    }
+    badgeModalContent.appendChild(item);
+    count++;
+  }
+  
 function initBadgeControls() {
   const badgeModalContent = document.querySelector('#badgesModal .modalContent');
 
@@ -145,57 +196,12 @@ function initBadgeControls() {
       };
       badgeFilterCache.splice(0, badgeFilterCache.length);
       const badges = [{ badgeId: 'null', game: null}].concat(playerBadges.sort(badgeCompareFunc));
-      for (let badge of badges) {
-        if (badge.game !== lastGame) {
-          const gameHeader = document.createElement('h2');
-          gameHeader.classList.add('itemCategoryHeader');
-          gameHeader.dataset.game = badge.game;
-          gameHeader.innerHTML = getMassagedLabel(localizedMessages.games[badge.game]);
-          badgeModalContent.appendChild(gameHeader);
-          lastGame = badge.game;
-          lastGroup = null;
-          if (badge.game !== 'ynoproject') {
-            const defaultSystemName = getDefaultUiTheme(badge.game);
-            initUiThemeContainerStyles(defaultSystemName, badge.game, false, () => initUiThemeFontStyles(defaultSystemName, badge.game, 0));
-            applyThemeStyles(gameHeader, (lastParsedSystemName = defaultSystemName.replace(/ /g, '_')), badge.game)
-          } else
-            lastParsedSystemName = null;
-        }
-        if (badge.group != lastGroup && localizedBadgeGroups.hasOwnProperty(lastGame) && localizedBadgeGroups[lastGame].hasOwnProperty(badge.group)) {
-          const groupHeader = document.createElement('h3');
-          groupHeader.classList.add('itemCategoryHeader');
-          groupHeader.dataset.game = badge.game;
-          groupHeader.dataset.group = badge.group;
-          groupHeader.innerHTML = getMassagedLabel(localizedBadgeGroups[lastGame][badge.group]);
-          badgeModalContent.appendChild(groupHeader);
-          lastGroup = badge.group;
-          if (lastParsedSystemName)
-            applyThemeStyles(groupHeader, lastParsedSystemName, lastGame);
-        }
-        const item = getBadgeItem(badge, true, true, true, true, true, lastParsedSystemName);
-        if (badge.badgeId === (playerData?.badge || 'null'))
-          item.children[0].classList.add('selected');
-        if (!item.classList.contains('disabled')) {
-          item.onclick = slotRow && slotCol
-            ? () => updatePlayerBadgeSlot(badge.badgeId, slotRow, slotCol, () => {
-              updateBadgeSlots(() => {
-                initAccountSettingsModal();
-                initBadgeGalleryModal();
-                closeModal()
-              });
-            })
-            : () => updatePlayerBadge(badge.badgeId, () => {
-              initAccountSettingsModal();
-              closeModal();
-            });
-        }
-        badgeModalContent.appendChild(item);
-      }
+      page();
       updateBadgeVisibility();
       removeLoader(document.getElementById('badgesModal'));
     });
   };
-
+  
   const updateBadgesAndPopulateModal = (slotRow, slotCol) => {
     sortOrder.onchange = () => onChangeBadgeSortOrder(slotRow, slotCol);
     document.getElementById('badgeGalleryButton').classList.toggle('hidden', !!(slotRow && slotCol));
