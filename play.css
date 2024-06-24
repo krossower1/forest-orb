@@ -196,6 +196,14 @@ button[type="button"]:disabled {
   height: 6px;
 }
 
+.pagination-button {
+  display: inline-block;
+}
+
+.pagination-nav {
+  text-align: center;
+}
+
 .checkbox > span:after, button.checkboxButton > span:after {
   content: "";
 }
