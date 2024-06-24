@@ -151,6 +151,7 @@ function pagination() {
     count++;
   }
   let badgePageNav = badgeModalContent.createElement("nav");
+  badgePageNav.setAttribute('class', 'pagination-nav');
   badgePageNav.innerHTML = '<button class="pagination-button" id="prev-button" type="button" class="unselectable"> &lt; </button> <button class="pagination-button" id="next-button" type="button" class="unselectable"> &gt; </button>';
   badgeModalContent.appendChild(badgePageNav);
 }
