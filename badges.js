@@ -162,7 +162,7 @@ document.querySelector("#next-button").addEventListener("click", () => {
   badgeModalContent.innerHTML = '';
   addLoader(document.getElementById('badgesModal'), true);
   updateBadgesAndPopulateModal(slotRow, slotCol);
-  page();
+  pagination();
   badgeModalContent.appendChild(badgePageNav);
   if (count > tabl.length)
     document.querySelector("#next-button").setAttribute('disabled');
@@ -174,7 +174,7 @@ document.querySelector("#prev-button").addEventListener("click", () => {
   addLoader(document.getElementById('badgesModal'), true);
   updateBadgesAndPopulateModal(slotRow, slotCol);
   count-= 100;
-  page();
+  pagination();
   badgeModalContent.appendChild(badgePageNav);
   if (count < tabl.length)
     document.querySelector("#next-button").removeAttribute('disabled');
